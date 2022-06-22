@@ -1,37 +1,20 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mabasset <mabasset@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/02/05 12:22:32 by mabasset          #+#    #+#              #
-#    Updated: 2022/04/20 10:08:32 by mabasset         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-NAME = push_swap
-BONUS = checker
-SRC = check.c main.c swap.c push.c rotate.c rev_rotate.c utility.c find.c findcomb.c movecount.c initializer.c
-SRC_CHECK = check.c checker.c swap.c push.c rotate.c rev_rotate.c utility.c initializer.c
-FLAG = -Wall -Werror -Wextra
+NAME = so_long
+SRC = main.c read_file.c utility.c check.c movement.c movenemy.c enemyinit.c
+FLAG = -Wall -Werror -Wextra -g
 LIBFT = libft/libft.a
+MLX_FLAG = -l mlx -framework openGL -framework AppKit
 
 $(NAME):
-		make re -C libft
-		gcc $(FLAG) -o $(NAME) $(SRC) $(LIBFT)
+			make re -C libft
+			gcc $(SRC) -o $(NAME) $(LIBFT) $(MLX_FLAG)
 
-bonus:
-		make re -C libft
-		gcc $(FLAG) -o $(BONUS) $(SRC_CHECK) $(LIBFT)
-
-all:	$(NAME) bonus
+all:	$(NAME)
 
 clean:
-		rm -f $(NAME) $(BONUS) $(LIB)
+			rm -f $(NAME)
 
 fclean:	clean
-		make fclean -C libft
+			make fclean -C libft
 
 re:		fclean all
 

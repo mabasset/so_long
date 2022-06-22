@@ -5,130 +5,127 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabasset <mabasset@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/06 10:58:46 by mabasset          #+#    #+#             */
-/*   Updated: 2022/04/20 23:04:19 by mabasset         ###   ########.fr       */
+/*   Created: 2022/02/12 17:51:17 by mabasset          #+#    #+#             */
+/*   Updated: 2022/03/17 11:56:34 by mabasset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "so_long.h"
 
-void	ft_go_away(t_struct *data, int x)
+void	ft_openimg(t_so_long *data)
 {
-	int	nb;
+	int	w;
+	int	h;
 
-	nb = data->ar_a[x];
-	while (data->ar_a[0] != nb)
-	{
-		if (x <= data->size_a / 2)
-			ft_rotate_a(data);
-		else
-			ft_rev_rotate_a(data);
-	}
-	ft_push_b(data);
+	data->img.player1 = mlx_xpm_file_to_image(data->mlx_ptr, PLAYER1, &w, &h);
+	data->img.player2 = mlx_xpm_file_to_image(data->mlx_ptr, PLAYER2, &w, &h);
+	data->img.exit1 = mlx_xpm_file_to_image(data->mlx_ptr, EXIT1, &w, &h);
+	data->img.exit2 = mlx_xpm_file_to_image(data->mlx_ptr, EXIT2, &w, &h);
+	data->img.dog1 = mlx_xpm_file_to_image(data->mlx_ptr, DOG1, &w, &h);
+	data->img.dog2 = mlx_xpm_file_to_image(data->mlx_ptr, DOG2, &w, &h);
+	data->img.grass1 = mlx_xpm_file_to_image(data->mlx_ptr, GRASS1, &w, &h);
+	data->img.grass2 = mlx_xpm_file_to_image(data->mlx_ptr, GRASS2, &w, &h);
 }
 
-void	ft_sep(t_struct *data)
+void	ft_putimg(char type, int row, int col, t_so_long *data)
 {
-	int	i;
-	int	average;
-	int	*ar;
+	void	*mlx;
+	void	*win;
 
-	ar = data->ar_a;
-	average = data->size_a / 4;
-	while (data->size_a != data->size_best && average != 0)
+	mlx = data->mlx_ptr;
+	win = data->win_ptr;
+	mlx_put_image_to_window(mlx, win, data->grass, col, row);
+	if (type == '1')
+		mlx_put_image_to_window(mlx, win, data->wall, col, row);
+	if (type == 'C')
+		mlx_put_image_to_window(mlx, win, data->collec, col, row);
+	if (type == 'E')
+		mlx_put_image_to_window(mlx, win, data->exit, col, row);
+	if (type == 'P')
+		mlx_put_image_to_window(mlx, win, data->player, col, row);
+	if (type == 'M')
+		mlx_put_image_to_window(mlx, win, data->enemy, col, row);
+}
+
+void	ft_draw(t_so_long	*data)
+{
+	int		row;
+	int		col;
+	void	*mlx;
+	void	*win;
+	char	*str;
+
+	row = 0;
+	while (row < data->height)
 	{
-		i = 0;
-		while (i < data->size_a)
+		col = 0;
+		while (col < data->width)
 		{
-			if (ft_findind(ar[i], data->ar_best, data->size_best) == -1)
-			{
-				if (ar[i] <= average || average < 3)
-				{
-					ft_go_away(data, i);
-					i = -1;
-				}
-			}
-			i++;
+			ft_putimg(data->matrix[row][col], row * 64, col * 64, data);
+			col++;
 		}
-		average += (data->size_a + data->size_b) / 4;
+		row++;
 	}
+	mlx = data->mlx_ptr;
+	win = data->win_ptr;
+	str = "MOVES";
+	mlx_string_put(mlx, win, data->width, data->height, BLUE, str);
+	str = ft_itoa(data->moves);
+	mlx_string_put(mlx, win, data->width + 70, data->height, BLUE, str);
+	free(str);
 }
 
-void	ft_resolve(t_struct *data)
+int	ft_updates(t_so_long *data)
 {
-	int	max_size;
-	int	*ara;
-
-	ara = data->ar_a;
-	max_size = data->size_a;
-	data->ar_b = (int *) malloc (sizeof(int) * max_size);
-	ft_checkmalloc(data->ar_b);
-	data->size_b = 0;
-	if (ft_order(data->ar_a, data->size_a) == 0)
+	data->frames++;
+	if (data->frames % 20 < 10)
+		data->enemy = data->img.dog1;
+	else
+		data->enemy = data->img.dog2;
+	if (data->frames < 50 || data->frames > 150)
 	{
-		if (ara[0] == 1 || ara[1] == 2 || ara[2] == 3)
-			if (ara[2] != 5 && ara[0] != 4)
-				ft_swap_a(data->ar_a, data->size_a);
-		ft_findcomb(data);
-		ft_sep(data);
-		free(data->ar_best);
-		while (data->size_b != 0)
-			ft_brainfuck(data);
-		if (ft_findind(1, data->ar_a, data->size_a) <= data->size_a / 2)
-			while (data->ar_a[0] != 1)
-				ft_rotate_a(data);
-		else
-			while (data->ar_a[0] != 1)
-				ft_rev_rotate_a(data);
+		data->exit = data->img.exit1;
+		data->player = data->img.player1;
 	}
-}
-
-int	*ft_trasformer(int *ar, int size)
-{
-	int	*temp;
-	int	*new;
-	int	i;
-	int	j;
-
-	new = ft_ardup(ar, size);
-	temp = (int *) malloc (sizeof(int) * size);
-	ft_checkmalloc(temp);
-	ft_sort_ar(new, size);
-	i = 0;
-	while (i < size)
+	else
 	{
-		j = 0;
-		while (new[i] != ar[j])
-			j++;
-		temp[j] = i + 1;
-		i++;
+		data->exit = data->img.exit2;
+		data->player = data->img.player2;
 	}
-	free(ar);
-	free(new);
-	return (temp);
+	if (data->frames < 120)
+		data->grass = data->img.grass1;
+	else
+		data->grass = data->img.grass2;
+	if (data->frames == 200)
+		data->frames = 0;
+	ft_draw(data);
+	return (1);
 }
 
 int	main(int argc, char *argv[])
 {
-	t_struct	data;
+	t_so_long	data;
+	int			w;
+	int			h;
 
-	if (argc <= 1)
-		return (0);
 	if (argc == 2)
-		data.ar_a = ft_mono_init(argv[1], &data.size_a);
-	else
 	{
-		argc -= 1;
-		if (ft_multi_check(&argv[1], argc) == 0)
-			ft_error();
-		data.ar_a = ft_multi_init(&argv[1], argc);
-		data.size_a = argc;
+		read_file(argv[1], &data);
+		if (ft_checkmap(&data) == 0)
+			ft_error("Map");
+		data.mlx_ptr = mlx_init();
+		w = data.width * 64;
+		h = data.height * 64;
+		data.win_ptr = mlx_new_window(data.mlx_ptr, w, h, "so_long");
+		data.frames = 0;
+		ft_openimg(&data);
+		ft_enemyinit(&data);
+		data.wall = mlx_xpm_file_to_image(data.mlx_ptr, WALL, &w, &h);
+		data.collec = mlx_xpm_file_to_image(data.mlx_ptr, APPLE, &w, &h);
+		data.moves = 0;
+		mlx_key_hook(data.win_ptr, ft_hooks, &data);
+		mlx_loop_hook(data.mlx_ptr, ft_updates, &data);
+		mlx_hook(data.win_ptr, 17, 0, ft_error, 0);
+		mlx_loop(data.mlx_ptr);
 	}
-	if (ft_checkfordoubles(data.ar_a, data.size_a) == 0)
-		ft_error();
-	data.ar_a = ft_trasformer(data.ar_a, data.size_a);
-	ft_resolve(&data);
-	free(data.ar_a);
-	free(data.ar_b);
-	return (0);
 }
