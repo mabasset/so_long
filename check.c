@@ -5,30 +5,75 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabasset <mabasset@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/22 02:21:35 by mabasset          #+#    #+#             */
-/*   Updated: 2022/03/17 11:33:36 by mabasset         ###   ########.fr       */
+/*   Created: 2022/02/14 15:06:31 by mabasset          #+#    #+#             */
+/*   Updated: 2022/04/21 22:06:09 by mabasset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "push_swap.h"
 
-int	ft_checkchar(t_so_long *data)
+void	ft_checkmalloc(void *ptr)
+{
+	if (ptr == NULL)
+		ft_error();
+}
+
+int	ft_order(int *ar, int size)
+{
+	int	i;
+
+	i = 0;
+	while (i < size - 1)
+	{
+		if (ar[i] > ar[i + 1])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	ft_check_max(char *str)
+{
+	long long int	nb;
+	int				i;
+	int				sign;
+
+	sign = 1;
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	nb = 0;
+	while (str[i] != '\0')
+	{
+		nb *= 10;
+		nb += str[i] - '0';
+		i++;
+	}
+	nb *= sign;
+	if (nb > 2147483647 || nb < -2147483648)
+		ft_error();
+}
+
+int	ft_multi_check(char **matrix, int size)
 {
 	int	row;
 	int	col;
 
 	row = 0;
-	while (row < data->height)
+	while (row < size)
 	{
 		col = 0;
-		while (col < data->width)
+		if (matrix[row][col] == '-' || matrix[row][col] == '+')
+			col += 1;
+		if (matrix[row][col] == '\0')
+			return (0);
+		while (matrix[row][col] != '\0')
 		{
-			if (data->matrix[row][col] != '0' &&
-				data->matrix[row][col] != '1' &&
-				data->matrix[row][col] != 'C' &&
-				data->matrix[row][col] != 'E' &&
-				data->matrix[row][col] != 'P' &&
-				data->matrix[row][col] != 'M')
+			if (ft_isdigit(matrix[row][col]) == 0)
 				return (0);
 			col++;
 		}
@@ -37,63 +82,22 @@ int	ft_checkchar(t_so_long *data)
 	return (1);
 }
 
-int	ft_checkwalls(t_so_long *data)
+int	ft_checkfordoubles(int *ar, int size)
 {
-	int	row;
-	int	col;
+	int	i;
+	int	j;
 
-	row = 0;
-	while (row < data->height)
+	i = 0;
+	while (i < size)
 	{
-		col = 0;
-		while (col < data->width)
+		j = i + 1;
+		while (j < size)
 		{
-			if (data->matrix[row][col] != '1' &&
-				((row == 0 || row == data->height - 1) ||
-				(col == 0 || col == data->width - 1)))
+			if (ar[i] == ar[j])
 				return (0);
-			col++;
+			j++;
 		}
-		row++;
+		i++;
 	}
-	return (1);
-}
-
-int	ft_check_cep(t_so_long *data)
-{
-	int	row;
-	int	col;
-
-	data->c = 0;
-	data->e = 0;
-	data->p = 0;
-	row = 0;
-	while (row++ < data->height - 1)
-	{
-		col = 0;
-		while (col++ < data->width - 1)
-		{
-			if (data->matrix[row][col] == 'C')
-				data->c++;
-			else if (data->matrix[row][col] == 'E')
-				data->e++;
-			else if (data->matrix[row][col] == 'P')
-				data->p++;
-		}
-	}
-	if (data->c == 0 || data->e == 0
-		|| (data->p == 0 || data->p > 1))
-		return (0);
-	return (1);
-}
-
-int	ft_checkmap(t_so_long *data)
-{
-	if (ft_checkchar(data) == 0)
-		return (0);
-	else if (ft_checkwalls(data) == 0)
-		return (0);
-	else if (ft_check_cep(data) == 0)
-		return (0);
 	return (1);
 }

@@ -1,46 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   find.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabasset <mabasset@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/01 15:09:23 by mabasset          #+#    #+#             */
-/*   Updated: 2022/04/20 23:42:57 by mabasset         ###   ########.fr       */
+/*   Created: 2022/03/03 17:47:40 by mabasset          #+#    #+#             */
+/*   Updated: 2022/04/20 10:00:06 by mabasset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-static int	ft_isspace(char c)
+int	ft_min(int *array, int size)
 {
-	if (c == ' ' || (c >= 9 && c <= 13))
-		return (1);
-	return (0);
+	int	min;
+	int	i;
+
+	min = array[0];
+	i = 1;
+	while (i < size)
+	{
+		if (array[i] < min)
+			min = array[i];
+		i++;
+	}
+	return (min);
 }
 
-int	ft_atoi(const char *str)
+int	ft_findind(int nb, int *array, int size)
 {
 	int	i;
-	int	nb;
-	int	sign;
 
 	i = 0;
-	nb = 0;
-	sign = 1;
-	while (ft_isspace(str[i]) && str[i] != '\0')
-		i++;
-	if (str[i] == '+' || str[i] == '-')
+	while (i < size)
 	{
-		if (str[i] == '-')
-			sign *= -1;
+		if (array[i] == nb)
+			return (i);
 		i++;
 	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		nb *= 10;
-		nb += str[i] - '0';
-		i++;
-	}
-	return (sign * nb);
+	return (-1);
+}
+
+int	ft_findindmin(int *array, int size)
+{
+	return (ft_findind(ft_min(array, size), array, size));
 }

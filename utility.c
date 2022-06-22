@@ -5,69 +5,88 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabasset <mabasset@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/18 10:37:42 by mabasset          #+#    #+#             */
-/*   Updated: 2022/03/17 12:02:11 by mabasset         ###   ########.fr       */
+/*   Created: 2022/02/07 05:30:57 by mabasset          #+#    #+#             */
+/*   Updated: 2022/04/19 11:48:43 by mabasset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "push_swap.h"
 
-int	ft_error(char *str)
+void	ft_error(void)
 {
-	if (str != NULL)
-		ft_printf("%s Error\n", str);
+	write(2, "Error\n", 6);
 	exit(1);
-	return (1);
 }
 
-void	ft_destroy(t_so_long *data)
+int	*ft_ardup(int *ar, int size)
 {
-	mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-	ft_freematrix(data->matrix, data->height);
-	exit(0);
-}
+	int	*ptr;
+	int	i;
 
-void	ft_findplayer(t_so_long *data)
-{
-	int	row;
-	int	col;
-
-	row = 0;
-	while (row < data->height)
+	ptr = (int *) malloc (sizeof(int) * size);
+	ft_checkmalloc(ptr);
+	i = 0;
+	while (i < size)
 	{
-		col = 0;
-		while (col < data->width)
-		{
-			if (data->matrix[row][col] == 'P')
-			{
-				data->p_pos.x = col;
-				data->p_pos.y = row;
-			}
-			col++;
-		}
-		row++;
+		ptr[i] = ar[i];
+		i++;
 	}
+	return (ptr);
 }
 
-int	ft_open(char *file_name, int mode)
+void	ft_freematrix(int **matrix, int size)
 {
-	int	fd;
+	int	i;
 
-	fd = open(file_name, mode);
-	if (fd < 0)
-		ft_error("Open");
-	return (fd);
-}
-
-void	ft_freematrix(char **matrix, int size)
-{
-	int	row;
-
-	row = 0;
-	while (row < size)
+	i = 0;
+	while (i < size)
 	{
-		free(matrix[row]);
-		row++;
+		free(matrix[i]);
+		i++;
 	}
 	free(matrix);
 }
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] != '\0' && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
+}
+
+void	ft_sort_ar(int *ar, int size)
+{
+	int	i;
+	int	flag;
+
+	flag = 0;
+	while (flag == 0)
+	{
+		flag = 1;
+		i = 0;
+		while (i < size - 1)
+		{
+			if (ar[i] > ar[i + 1])
+			{
+				ft_swap(ar + i, ar + (i + 1), size);
+				flag = 0;
+			}
+			i++;
+		}
+	}
+}
+
+// void	ft_printarray(int *ar, int size)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < size)
+// 	{
+// 		ft_printf("%d\n", ar[i]);
+// 		i++;
+// 	}
+// }
